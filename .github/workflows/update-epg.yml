@@ -1,0 +1,27 @@
+name: Update EPG
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"   # kas 6 valandas
+  workflow_dispatch:        # leidžia paleisti ranka
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Download latest EPG
+        run: |
+          curl -L "https://ip-tv.dev/epg/epg.xml.gz" -o epg.xml.gz
+          gunzip -f epg.xml.gz   # išpakuoja .gz į epg.xml
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add epg.xml
+          git commit -m "Auto-update EPG $(date)" || echo "No changes to commit"
+          git push
+
