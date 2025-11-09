@@ -26,8 +26,7 @@ jobs:
           git add epg.xml
           git commit -m "Auto-update EPG $(date)" || echo "No changes to commit"
           git push
-
-nano .github/workflows/update-epg.yml
+          
 
 name: Update EPG
 
