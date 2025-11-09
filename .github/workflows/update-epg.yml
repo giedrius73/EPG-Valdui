@@ -1,5 +1,8 @@
 name: Update EPG
 
+permissions:
+  contents: write   # leidžia GITHUB_TOKEN daryti push
+
 on:
   schedule:
     - cron: "0 */6 * * *"   # kas 6 valandas
@@ -11,18 +14,18 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
 
       - name: Download latest EPG
         run: |
           curl -L "https://ip-tv.dev/epg/epg.xml.gz" -o epg.xml.gz
 
       - name: Commit and push
-        run: |
-          git config --global user.name "giedrius73"
-          git config --global user.email "baltasevicius@gmail.com"
-          git add epg.xml.gz
-          git commit -m "Automatinis EPG atnaujinimas"
-          git push
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: "epg.xml.gz"
+          message: "Automatinis EPG atnaujinimas"
+          author_name: "giedrius73"
+          author_email: "baltasevicius@gmail.com"
